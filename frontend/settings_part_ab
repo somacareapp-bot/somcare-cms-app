@@ -1,0 +1,400 @@
+          ['Room 201', 'Pediatrics', '1 patient', 'Available'],
+        ]}
+        addLabel="+ Add Room"
+      />
+    </PanelShell>
+  );
+}
+
+function WardsBeds() {
+  return (
+    <PanelShell title="Wards / Beds" description="Inpatient ward layout and bed management">
+      <DataTable
+        columns={['Ward', 'Department', 'Total Beds', 'Occupied', 'Available']}
+        rows={[
+          ['Male Ward', 'General Medicine', '10', '6', '4'],
+          ['Female Ward', 'General Medicine', '10', '5', '5'],
+          ['Maternity Ward', 'Pediatrics', '6', '2', '4'],
+        ]}
+        addLabel="+ Add Ward"
+      />
+    </PanelShell>
+  );
+}
+
+function WorkingHours() {
+  return (
+    <PanelShell title="Working Hours" description="Opening hours, holidays, and shift schedules">
+      <WeeklyHoursEditor />
+      <Field label="Upcoming Holiday Closures" hint="Comma-separated dates the facility is closed" full>
+        <TextInput placeholder="e.g. 2026-12-25, 2027-01-01" />
+      </Field>
+    </PanelShell>
+  );
+}
+
+function Users() {
+  return (
+    <PanelShell title="Users" description="Manage system user accounts">
+      <DataTable
+        columns={['Name', 'Email', 'Role', 'Department', 'Status']}
+        rows={[
+          ['Ahmed Hassan', 'ahmed@daryeelmedicare.com', 'Doctor', 'General Medicine', 'Active'],
+          ['Khadija Omar', 'khadija@daryeelmedicare.com', 'Pharmacist', 'Pharmacy', 'Active'],
+          ['System Administrator', 'admin@daryeelmedicare.com', 'Administrator', '—', 'Active'],
+        ]}
+        addLabel="+ Invite User"
+      />
+    </PanelShell>
+  );
+}
+
+function Roles() {
+  return (
+    <PanelShell title="Roles" description="Define roles and how many permissions each carries">
+      <DataTable
+        columns={['Role', 'Permissions Granted', 'Users Assigned']}
+        rows={ROLES.map((r) => [r, r === 'Administrator' ? 'All (8)' : '2–4', r === 'Administrator' ? '1' : '3'])}
+        addLabel="+ Add Role"
+      />
+    </PanelShell>
+  );
+}
+
+function Permissions() {
+  return (
+    <PanelShell title="Permissions" description="Grant or revoke actions per role">
+      <PermissionMatrix roles={ROLES} permissions={PERMISSIONS} />
+    </PanelShell>
+  );
+}
+
+function DoctorAccounts() {
+  return (
+    <PanelShell title="Doctor Accounts" description="Specialty, license, and department for each doctor">
+      <DataTable
+        columns={['Name', 'Specialty', 'License No.', 'Department']}
+        rows={[
+          ['Dr. Ahmed Hassan', 'General Practitioner', 'SL-MD-1042', 'General Medicine'],
+          ['Dr. Faduma Ali', 'Pediatrician', 'SL-MD-2078', 'Pediatrics'],
+        ]}
+        addLabel="+ Add Doctor"
+      />
+    </PanelShell>
+  );
+}
+
+function StaffAccounts() {
+  return (
+    <PanelShell title="Staff Accounts" description="Non-clinical and support staff">
+      <DataTable
+        columns={['Name', 'Position', 'Department', 'Employment Type']}
+        rows={[
+          ['Amina Jama', 'Receptionist', 'Front Desk', 'Full-time'],
+          ['Yusuf Ismail', 'Lab Technician', 'Laboratory', 'Full-time'],
+        ]}
+        addLabel="+ Add Staff"
+      />
+    </PanelShell>
+  );
+}
+
+function DepartmentAssignments() {
+  return (
+    <PanelShell title="Department Assignments" description="Assign staff members to departments">
+      <FieldGrid>
+        <Field label="Staff Member"><SelectInput options={['Amina Jama', 'Yusuf Ismail', 'Dr. Faduma Ali']} /></Field>
+        <Field label="Department"><SelectInput options={['General Medicine', 'Pediatrics', 'Laboratory', 'Pharmacy']} /></Field>
+        <Field label="Role in Department"><TextInput placeholder="e.g. Ward Nurse" /></Field>
+        <Field label="Effective Date"><TextInput type="date" /></Field>
+      </FieldGrid>
+      <DataTable
+        columns={['Staff', 'Department', 'Role']}
+        rows={[
+          ['Amina Jama', 'Front Desk', 'Receptionist'],
+          ['Yusuf Ismail', 'Laboratory', 'Technician'],
+        ]}
+        addLabel="+ Assign"
+      />
+    </PanelShell>
+  );
+}
+
+function RolePermissions() {
+  const [role, setRole] = useState('Doctor');
+  const granted = new Set(role === 'Administrator' ? PERMISSIONS : ['View Patients', 'Edit Patients']);
+  return (
+    <PanelShell title="Role Permissions" description="Fine-tune permissions for a single role">
+      <Field label="Select Role">
+        <SelectInput options={ROLES} value={role} onChange={(e) => setRole(e.target.value)} />
+      </Field>
+      <div className="divide-y divide-gray-100 rounded-md border border-gray-200">
+        {PERMISSIONS.map((p) => (
+          <ToggleRow key={p} label={p} checked={granted.has(p)} onChange={() => {}} />
+        ))}
+      </div>
+    </PanelShell>
+  );
+}
+
+function LoginSessionSettings() {
+  const [require2fa, setRequire2fa] = useState(false);
+  const [forceChange, setForceChange] = useState(true);
+  return (
+    <PanelShell title="Login / Session Settings" description="Security and session policy">
+      <FieldGrid>
+        <Field label="Session Timeout (minutes)"><TextInput type="number" defaultValue={120} /></Field>
+        <Field label="Max Login Attempts"><TextInput type="number" defaultValue={5} /></Field>
+        <Field label="Password Expiry (days)"><TextInput type="number" defaultValue={90} /></Field>
+        <Field label="Minimum Password Length"><TextInput type="number" defaultValue={8} /></Field>
+      </FieldGrid>
+      <ToggleRow label="Require Two-Factor Authentication" checked={require2fa} onChange={setRequire2fa} />
+      <ToggleRow
+        label="Force Password Change on First Login"
+        checked={forceChange}
+        onChange={setForceChange}
+      />
+    </PanelShell>
+  );
+}
+
+function VitalRanges() {
+  return (
+    <PanelShell title="Vital Sign Ranges" description="Normal ranges used for flagging abnormal readings">
+      <DataTable
+        columns={['Vital Sign', 'Normal Min', 'Normal Max', 'Unit']}
+        rows={[
+          ['Blood Pressure (Systolic)', '90', '120', 'mmHg'],
+          ['Heart Rate', '60', '100', 'bpm'],
+          ['Temperature', '36.1', '37.2', '°C'],
+          ['SpO2', '95', '100', '%'],
+          ['Respiratory Rate', '12', '20', 'breaths/min'],
+        ]}
+        addLabel="+ Add Vital"
+      />
+    </PanelShell>
+  );
+}
+
+function DiagnosisCodes() {
+  return (
+    <PanelShell title="Diagnosis Codes (ICD-10)" description="Diagnosis codes available when recording visits">
+      <Field label="Search codes"><TextInput placeholder="Search by code or description..." /></Field>
+      <DataTable
+        columns={['Code', 'Description', 'Category']}
+        rows={[
+          ['J06.9', 'Acute upper respiratory infection, unspecified', 'Respiratory'],
+          ['A09', 'Infectious gastroenteritis and colitis', 'Digestive'],
+          ['E11.9', 'Type 2 diabetes mellitus without complications', 'Endocrine'],
+        ]}
+        addLabel="+ Add Code"
+      />
+    </PanelShell>
+  );
+}
+
+function VisitTypes() {
+  return (
+    <PanelShell title="Visit Types" description="Categories used when registering a patient visit">
+      <DataTable
+        columns={['Visit Type', 'Default Duration', 'Color Tag']}
+        rows={[
+          ['New Patient', '30 min', 'Blue'],
+          ['Follow-up', '15 min', 'Green'],
+          ['Emergency', '—', 'Red'],
+          ['Referral', '20 min', 'Purple'],
+        ]}
+        addLabel="+ Add Visit Type"
+      />
+    </PanelShell>
+  );
+}
+
+function ClinicalNoteTemplates() {
+  return (
+    <PanelShell title="Clinical Note Templates" description="Reusable templates doctors can start a note from">
+      <DataTable
+        columns={['Template', 'Specialty', 'Last Updated']}
+        rows={[
+          ['SOAP — General', 'General Medicine', '2 weeks ago'],
+          ['Antenatal Visit', 'Pediatrics', '1 month ago'],
+        ]}
+        addLabel="+ Add Template"
+      />
+    </PanelShell>
+  );
+}
+
+function MedicinesCatalogSettings() {
+  return (
+    <PanelShell title="Medicines Catalog" description="Defaults applied when adding medicines">
+      <FieldGrid>
+        <Field label="Default Unit of Measure"><SelectInput options={['Tablet', 'Capsule', 'Bottle', 'Vial', 'Box']} /></Field>
+        <Field label="Default Category"><SelectInput options={['Antibiotics', 'Analgesics', 'Antimalarials', 'Vitamins']} /></Field>
+      </FieldGrid>
+      <ToggleRow label="Require Generic Name" description="Generic name must be entered for every medicine" checked={true} onChange={() => {}} />
+    </PanelShell>
+  );
+}
+
+function StockAlerts() {
+  return (
+    <PanelShell title="Stock Alerts" description="Thresholds that trigger low-stock and expiry warnings">
+      <FieldGrid>
+        <Field label="Low Stock Threshold" hint="Alert when quantity falls below this"><TextInput type="number" defaultValue={20} /></Field>
+        <Field label="Expiry Alert (days before)"><TextInput type="number" defaultValue={60} /></Field>
+      </FieldGrid>
+    </PanelShell>
+  );
+}
+
+function DispensingRules() {
+  const [reqRx, setReqRx] = useState(true);
+  const [partial, setPartial] = useState(true);
+  const [controlled, setControlled] = useState(true);
+  return (
+    <PanelShell title="Dispensing Rules" description="Controls applied at the pharmacy counter">
+      <ToggleRow label="Require Valid Prescription" checked={reqRx} onChange={setReqRx} />
+      <ToggleRow label="Allow Partial Dispensing" checked={partial} onChange={setPartial} />
+      <ToggleRow label="Require Double-Check for Controlled Substances" checked={controlled} onChange={setControlled} />
+    </PanelShell>
+  );
+}
+
+function TestCatalog() {
+  return (
+    <PanelShell title="Test Catalog" description="Laboratory tests available for ordering">
+      <DataTable
+        columns={['Test', 'Category', 'Sample Type', 'Turnaround', 'Price']}
+        rows={[
+          ['Full Blood Count', 'Hematology', 'Blood', '2 hrs', '$8'],
+          ['Malaria Test (RDT)', 'Parasitology', 'Blood', '30 min', '$5'],
+          ['Urinalysis', 'Chemistry', 'Urine', '1 hr', '$4'],
+        ]}
+        addLabel="+ Add Test"
+      />
+    </PanelShell>
+  );
+}
+
+function ReferenceRanges() {
+  return (
+    <PanelShell title="Reference Ranges" description="Normal ranges used to flag lab results">
+      <DataTable
+        columns={['Test', 'Sex', 'Normal Range', 'Unit']}
+        rows={[
+          ['Hemoglobin', 'Male', '13.5 – 17.5', 'g/dL'],
+          ['Hemoglobin', 'Female', '12.0 – 15.5', 'g/dL'],
+          ['Fasting Glucose', 'All', '70 – 100', 'mg/dL'],
+        ]}
+        addLabel="+ Add Range"
+      />
+    </PanelShell>
+  );
+}
+
+function SampleTypes() {
+  return (
+    <PanelShell title="Sample Types" description="Collection and handling instructions">
+      <DataTable
+        columns={['Sample Type', 'Container', 'Handling']}
+        rows={[
+          ['Venous Blood', 'EDTA Tube', 'Refrigerate, analyze within 24h'],
+          ['Urine', 'Sterile Cup', 'Analyze within 2h of collection'],
+        ]}
+        addLabel="+ Add Sample Type"
+      />
+    </PanelShell>
+  );
+}
+
+function Modalities() {
+  return (
+    <PanelShell title="Modalities" description="Imaging equipment available at this facility">
+      <DataTable
+        columns={['Modality', 'Equipment ID', 'Status']}
+        rows={[
+          ['X-Ray', 'XR-001', 'Operational'],
+          ['Ultrasound', 'US-002', 'Operational'],
+        ]}
+        addLabel="+ Add Modality"
+      />
+    </PanelShell>
+  );
+}
+
+function ProcedureTypes() {
+  return (
+    <PanelShell title="Procedure Types" description="Default duration and prep instructions per procedure">
+      <DataTable
+        columns={['Procedure', 'Modality', 'Duration', 'Prep Instructions']}
+        rows={[
+          ['Chest X-Ray', 'X-Ray', '10 min', 'Remove metal objects'],
+          ['Abdominal Ultrasound', 'Ultrasound', '20 min', 'Fasting 6h prior'],
+        ]}
+        addLabel="+ Add Procedure"
+      />
+    </PanelShell>
+  );
+}
+
+function RadiologyReportTemplates() {
+  return (
+    <PanelShell title="Report Templates" description="Structured templates radiologists report against">
+      <DataTable
+        columns={['Template', 'Modality', 'Last Updated']}
+        rows={[
+          ['Chest X-Ray — Normal', 'X-Ray', '3 weeks ago'],
+          ['Obstetric Ultrasound', 'Ultrasound', '5 days ago'],
+        ]}
+        addLabel="+ Add Template"
+      />
+    </PanelShell>
+  );
+}
+
+function AppointmentTypes() {
+  return (
+    <PanelShell title="Appointment Types" description="New, follow-up, procedure, urgent">
+      <DataTable
+        columns={['Type', 'Default Duration', 'Color', 'Requires Doctor']}
+        rows={[
+          ['New Patient', '30 min', 'Blue', 'Yes'],
+          ['Follow-up', '15 min', 'Green', 'Yes'],
+          ['Procedure', '45 min', 'Orange', 'Yes'],
+          ['Urgent', '20 min', 'Red', 'Yes'],
+        ]}
+        addLabel="+ Add Type"
+      />
+    </PanelShell>
+  );
+}
+
+function AppointmentDuration() {
+  return (
+    <PanelShell title="Appointment Duration" description="Default slot length by type">
+      <FieldGrid>
+        <Field label="New Patient (minutes)"><TextInput type="number" defaultValue={30} /></Field>
+        <Field label="Follow-up (minutes)"><TextInput type="number" defaultValue={15} /></Field>
+        <Field label="Procedure (minutes)"><TextInput type="number" defaultValue={45} /></Field>
+        <Field label="Urgent (minutes)"><TextInput type="number" defaultValue={20} /></Field>
+      </FieldGrid>
+    </PanelShell>
+  );
+}
+
+function DoctorSchedules() {
+  return (
+    <PanelShell title="Doctor Schedules" description="Per-doctor availability and time blocks">
+      <Field label="Doctor">
+        <SelectInput options={['Dr. Ahmed Hassan', 'Dr. Faduma Ali']} />
+      </Field>
+      <WeeklyHoursEditor defaultClosed={['Friday', 'Sunday']} />
+    </PanelShell>
+  );
+}
+
+function DepartmentSchedules() {
+  return (
+    <PanelShell title="Department Schedules" description="Department-level opening slots">
+      <Field label="Department">

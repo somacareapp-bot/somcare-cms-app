@@ -1,0 +1,400 @@
+        <SelectInput options={['General Medicine', 'Pediatrics', 'Laboratory']} />
+      </Field>
+      <WeeklyHoursEditor />
+    </PanelShell>
+  );
+}
+
+function BookingRules() {
+  const [sameDay, setSameDay] = useState(true);
+  return (
+    <PanelShell title="Booking Rules" description="Advance booking limits and restrictions">
+      <FieldGrid>
+        <Field label="Advance Booking Limit (days)"><TextInput type="number" defaultValue={30} /></Field>
+        <Field label="Minimum Notice (hours)"><TextInput type="number" defaultValue={2} /></Field>
+        <Field label="Max Appointments per Patient/Day"><TextInput type="number" defaultValue={2} /></Field>
+      </FieldGrid>
+      <ToggleRow label="Allow Same-Day Booking" checked={sameDay} onChange={setSameDay} />
+    </PanelShell>
+  );
+}
+
+function CancellationRules() {
+  const [selfCancel, setSelfCancel] = useState(true);
+  return (
+    <PanelShell title="Cancellation Rules" description="Cancellation window and penalties">
+      <FieldGrid>
+        <Field label="Cancellation Window (hours before)"><TextInput type="number" defaultValue={24} /></Field>
+        <Field label="Late-Cancellation Fee"><TextInput placeholder="e.g. $5 or 10%" /></Field>
+      </FieldGrid>
+      <ToggleRow label="Allow Patients to Self-Cancel" checked={selfCancel} onChange={setSelfCancel} />
+    </PanelShell>
+  );
+}
+
+function ReschedulingRules() {
+  const [requireReason, setRequireReason] = useState(false);
+  return (
+    <PanelShell title="Rescheduling Rules" description="How and when reschedules are allowed">
+      <FieldGrid>
+        <Field label="Max Reschedules Allowed"><TextInput type="number" defaultValue={2} /></Field>
+        <Field label="Reschedule Window (hours before)"><TextInput type="number" defaultValue={12} /></Field>
+      </FieldGrid>
+      <ToggleRow label="Require a Reason When Rescheduling" checked={requireReason} onChange={setRequireReason} />
+    </PanelShell>
+  );
+}
+
+function OnlineBooking() {
+  const [enabled, setEnabled] = useState(true);
+  const [verify, setVerify] = useState(true);
+  return (
+    <PanelShell title="Online Booking" description="Patient self-booking portal settings">
+      <ToggleRow label="Enable Online Booking" checked={enabled} onChange={setEnabled} />
+      <ToggleRow label="Require Account Verification" checked={verify} onChange={setVerify} />
+      <FieldGrid>
+        <Field label="Booking Horizon (days ahead)"><TextInput type="number" defaultValue={14} /></Field>
+        <Field label="Visible Doctors"><SelectInput options={['All Doctors', 'Selected Doctors Only']} /></Field>
+      </FieldGrid>
+    </PanelShell>
+  );
+}
+
+function AppointmentReminders() {
+  const [sms, setSms] = useState(true);
+  const [email, setEmail] = useState(true);
+  return (
+    <PanelShell title="Appointment Reminders" description="SMS/email reminder schedule">
+      <ToggleRow label="Send SMS Reminder" checked={sms} onChange={setSms} />
+      <ToggleRow label="Send Email Reminder" checked={email} onChange={setEmail} />
+      <FieldGrid>
+        <Field label="First Reminder (hours before)"><TextInput type="number" defaultValue={24} /></Field>
+        <Field label="Second Reminder (hours before)"><TextInput type="number" defaultValue={2} /></Field>
+      </FieldGrid>
+      <Field label="Reminder Message Template" full>
+        <TextArea defaultValue="Hi {patient_name}, this is a reminder of your appointment with {doctor_name} on {date} at {time}." />
+      </Field>
+    </PanelShell>
+  );
+}
+
+function QueueDisplay() {
+  const [autoCall, setAutoCall] = useState(true);
+  return (
+    <PanelShell title="Queue Display" description="Screen, TV, and call behavior">
+      <FieldGrid>
+        <Field label="Display Type"><SelectInput options={['Screen + TV', 'Screen Only', 'Audio Only']} /></Field>
+        <Field label="Call Interval (seconds)"><TextInput type="number" defaultValue={30} /></Field>
+      </FieldGrid>
+      <ToggleRow label="Auto Call Next Patient" checked={autoCall} onChange={setAutoCall} />
+    </PanelShell>
+  );
+}
+
+function QueueCategories() {
+  return (
+    <PanelShell title="Queue Categories" description="Which stages appear on the queue board">
+      <ChecklistGrid items={['Registration', 'Triage', 'Consultation', 'Laboratory', 'Radiology', 'Pharmacy', 'Cashier']} />
+    </PanelShell>
+  );
+}
+
+function PriorityRules() {
+  const [emergency, setEmergency] = useState(true);
+  const [elderly, setElderly] = useState(true);
+  const [appt, setAppt] = useState(false);
+  return (
+    <PanelShell title="Priority Rules" description="Who jumps the queue and when">
+      <ToggleRow label="Emergency Cases Get Top Priority" checked={emergency} onChange={setEmergency} />
+      <ToggleRow label="Elderly Patients Get Priority" checked={elderly} onChange={setElderly} />
+      <ToggleRow label="Appointment Holders Priority Over Walk-ins" checked={appt} onChange={setAppt} />
+    </PanelShell>
+  );
+}
+
+function GeneralBilling() {
+  return (
+    <PanelShell title="General Billing" description="Currency, tax, and invoicing defaults">
+      <FieldGrid>
+        <Field label="Currency"><SelectInput options={['USD (US Dollar)', 'SOS (Somali Shilling)', 'SLSH (Somaliland Shilling)']} /></Field>
+        <Field label="Tax Rate (%)"><TextInput type="number" defaultValue={0} /></Field>
+        <Field label="Invoice Number Prefix"><TextInput defaultValue="INV-" /></Field>
+        <Field label="Invoice Due (days)"><TextInput type="number" defaultValue={7} /></Field>
+      </FieldGrid>
+    </PanelShell>
+  );
+}
+
+function PaymentMethods() {
+  return (
+    <PanelShell title="Payment Methods" description="Accepted ways patients can pay">
+      <ChecklistGrid items={['Cash', 'Card', 'EVC Plus', 'Zaad', 'Insurance', 'Bank Transfer']} />
+    </PanelShell>
+  );
+}
+
+function InsuranceProviders() {
+  return (
+    <PanelShell title="Insurance Providers" description="Providers accepted and their coverage terms">
+      <DataTable
+        columns={['Provider', 'Coverage', 'Contact', 'Status']}
+        rows={[
+          ['Nasiye Insurance', '80%', '+252 63 9988776', 'Active'],
+          ['Takaful Insurance', '70%', '+252 63 1122334', 'Active'],
+        ]}
+        addLabel="+ Add Provider"
+      />
+    </PanelShell>
+  );
+}
+
+function StockSettings() {
+  return (
+    <PanelShell title="Stock Settings" description="Inventory-wide defaults">
+      <FieldGrid>
+        <Field label="Default Reorder Threshold"><TextInput type="number" defaultValue={15} /></Field>
+        <Field label="Default Unit of Measure"><SelectInput options={['Piece', 'Box', 'Pack', 'Carton']} /></Field>
+      </FieldGrid>
+      <ToggleRow label="Enable Auto-Reorder" description="Automatically raise a purchase order at threshold" checked={false} onChange={() => {}} />
+    </PanelShell>
+  );
+}
+
+function Suppliers() {
+  return (
+    <PanelShell title="Suppliers" description="Vendors used for stock replenishment">
+      <DataTable
+        columns={['Supplier', 'Contact', 'Items Supplied', 'Status']}
+        rows={[
+          ['Hargeisa Medical Supplies', '+252 63 4455667', 'Medicines, Consumables', 'Active'],
+          ['Horn Pharma Distributors', '+252 63 7788990', 'Medicines', 'Active'],
+        ]}
+        addLabel="+ Add Supplier"
+      />
+    </PanelShell>
+  );
+}
+
+function PrinterSettings() {
+  const [autoRx, setAutoRx] = useState(true);
+  const [autoReceipt, setAutoReceipt] = useState(true);
+  const [printCard, setPrintCard] = useState(false);
+  return (
+    <PanelShell title="Printer Settings" description="Configure printers for receipts and prescriptions">
+      <FieldGrid>
+        <Field label="Printer Type"><SelectInput options={['Thermal / Receipt Printer', 'Laser Printer', 'Inkjet Printer']} /></Field>
+        <Field label="Default Printer"><SelectInput options={['HP LaserJet Pro', 'Epson TM-T88', 'Canon PIXMA']} /></Field>
+      </FieldGrid>
+      <ToggleRow label="Auto Print Prescriptions" checked={autoRx} onChange={setAutoRx} />
+      <ToggleRow label="Auto Print Receipts" checked={autoReceipt} onChange={setAutoReceipt} />
+      <ToggleRow label="Print Patient Card on Registration" checked={printCard} onChange={setPrintCard} />
+    </PanelShell>
+  );
+}
+
+function DocumentTemplates() {
+  return (
+    <PanelShell title="Document Templates" description="Printable templates used across the system">
+      <DataTable
+        columns={['Document', 'Last Updated']}
+        rows={[
+          ['Prescription', '1 week ago'],
+          ['Receipt', '2 weeks ago'],
+          ['Lab Report', '3 days ago'],
+          ['Referral Letter', '1 month ago'],
+        ]}
+        addLabel="+ Add Template"
+      />
+    </PanelShell>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Category / panel registry                                         */
+/* ------------------------------------------------------------------ */
+
+interface PanelDef {
+  id: string;
+  title: string;
+  description: string;
+  Component: () => JSX.Element;
+}
+
+interface CategoryDef {
+  id: string;
+  label: string;
+  panels: PanelDef[];
+}
+
+const CATEGORIES: CategoryDef[] = [
+  {
+    id: 'facility',
+    label: 'Facility & Organization',
+    panels: [
+      { id: 'facility-info', title: 'Facility Information', description: 'Name, logo, address, contact details', Component: FacilityInformation },
+      { id: 'branches', title: 'Branches', description: 'Manage clinic branches or satellite locations', Component: Branches },
+      { id: 'departments', title: 'Departments', description: 'Clinical and admin department structure', Component: Departments },
+      { id: 'services', title: 'Services', description: 'Services offered by the facility', Component: Services },
+      { id: 'rooms', title: 'Consultation Rooms', description: 'Room numbers, capacities, and assignments', Component: ConsultationRooms },
+      { id: 'wards', title: 'Wards / Beds', description: 'Inpatient ward layout and bed management', Component: WardsBeds },
+      { id: 'hours', title: 'Working Hours', description: 'Opening hours, holidays, and shift schedules', Component: WorkingHours },
+    ],
+  },
+  {
+    id: 'users',
+    label: 'Users & Access',
+    panels: [
+      { id: 'users', title: 'Users', description: 'Manage system user accounts', Component: Users },
+      { id: 'roles', title: 'Roles', description: 'New, follow-up, procedure, urgent', Component: Roles },
+      { id: 'permissions', title: 'Permissions', description: 'Grant or revoke actions per role', Component: Permissions },
+      { id: 'doctor-accounts', title: 'Doctor Accounts', description: 'Specialty, license, and department', Component: DoctorAccounts },
+      { id: 'staff-accounts', title: 'Staff Accounts', description: 'Non-clinical and support staff', Component: StaffAccounts },
+      { id: 'dept-assignments', title: 'Department Assignments', description: 'Assign staff members to departments', Component: DepartmentAssignments },
+      { id: 'role-permissions', title: 'Role Permissions', description: 'Fine-tune permissions for a single role', Component: RolePermissions },
+      { id: 'login-session', title: 'Login / Session Settings', description: 'Security and session policy', Component: LoginSessionSettings },
+    ],
+  },
+  {
+    id: 'clinical',
+    label: 'Clinical Configuration',
+    panels: [
+      { id: 'vitals', title: 'Vital Sign Ranges', description: 'Normal ranges used for flagging results', Component: VitalRanges },
+      { id: 'diagnosis-codes', title: 'Diagnosis Codes (ICD-10)', description: 'Codes available when recording visits', Component: DiagnosisCodes },
+      { id: 'visit-types', title: 'Visit Types', description: 'Categories used when registering a visit', Component: VisitTypes },
+      { id: 'note-templates', title: 'Clinical Note Templates', description: 'Reusable templates for doctors', Component: ClinicalNoteTemplates },
+    ],
+  },
+  {
+    id: 'pharmacy',
+    label: 'Pharmacy',
+    panels: [
+      { id: 'medicine-catalog', title: 'Medicines Catalog', description: 'Defaults for adding medicines', Component: MedicinesCatalogSettings },
+      { id: 'stock-alerts', title: 'Stock Alerts', description: 'Low-stock and expiry alert thresholds', Component: StockAlerts },
+      { id: 'dispensing-rules', title: 'Dispensing Rules', description: 'Controls at the pharmacy counter', Component: DispensingRules },
+    ],
+  },
+  {
+    id: 'laboratory',
+    label: 'Laboratory',
+    panels: [
+      { id: 'test-catalog', title: 'Test Catalog', description: 'Tests available for ordering', Component: TestCatalog },
+      { id: 'reference-ranges', title: 'Reference Ranges', description: 'Normal ranges used to flag results', Component: ReferenceRanges },
+      { id: 'sample-types', title: 'Sample Types', description: 'Collection and handling instructions', Component: SampleTypes },
+    ],
+  },
+  {
+    id: 'radiology',
+    label: 'Radiology',
+    panels: [
+      { id: 'modalities', title: 'Modalities', description: 'Imaging equipment available', Component: Modalities },
+      { id: 'procedure-types', title: 'Procedure Types', description: 'Duration and prep per procedure', Component: ProcedureTypes },
+      { id: 'radiology-templates', title: 'Report Templates', description: 'Structured reporting templates', Component: RadiologyReportTemplates },
+    ],
+  },
+  {
+    id: 'appointments',
+    label: 'Appointment Settings',
+    panels: [
+      { id: 'appt-types', title: 'Appointment Types', description: 'New, follow-up, procedure, urgent', Component: AppointmentTypes },
+      { id: 'appt-duration', title: 'Appointment Duration', description: 'Default slot lengths by type', Component: AppointmentDuration },
+      { id: 'doctor-schedules', title: 'Doctor Schedules', description: 'Per-doctor availability and time blocks', Component: DoctorSchedules },
+      { id: 'dept-schedules', title: 'Department Schedules', description: 'Department-level opening slots', Component: DepartmentSchedules },
+      { id: 'booking-rules', title: 'Booking Rules', description: 'Advance booking limits, restrictions', Component: BookingRules },
+      { id: 'cancellation-rules', title: 'Cancellation Rules', description: 'Cancellation window and penalties', Component: CancellationRules },
+      { id: 'reschedule-rules', title: 'Rescheduling Rules', description: 'How and when to allow reschedules', Component: ReschedulingRules },
+      { id: 'online-booking', title: 'Online Booking', description: 'Patient self-booking portal settings', Component: OnlineBooking },
+      { id: 'reminders', title: 'Appointment Reminders', description: 'SMS/email reminder schedule', Component: AppointmentReminders },
+    ],
+  },
+  {
+    id: 'queue',
+    label: 'Queue Management',
+    panels: [
+      { id: 'queue-display', title: 'Queue Display', description: 'Screen, TV, and call behavior', Component: QueueDisplay },
+      { id: 'queue-categories', title: 'Queue Categories', description: 'Stages shown on the queue board', Component: QueueCategories },
+      { id: 'priority-rules', title: 'Priority Rules', description: 'Who jumps the queue and when', Component: PriorityRules },
+    ],
+  },
+  {
+    id: 'billing',
+    label: 'Billing & Finance',
+    panels: [
+      { id: 'general-billing', title: 'General Billing', description: 'Currency, tax, and invoicing defaults', Component: GeneralBilling },
+      { id: 'payment-methods', title: 'Payment Methods', description: 'Accepted ways patients can pay', Component: PaymentMethods },
+      { id: 'insurance', title: 'Insurance Providers', description: 'Providers accepted and coverage terms', Component: InsuranceProviders },
+    ],
+  },
+  {
+    id: 'inventory',
+    label: 'Inventory',
+    panels: [
+      { id: 'stock-settings', title: 'Stock Settings', description: 'Inventory-wide defaults', Component: StockSettings },
+      { id: 'suppliers', title: 'Suppliers', description: 'Vendors used for stock replenishment', Component: Suppliers },
+    ],
+  },
+  {
+    id: 'printing',
+    label: 'Printing',
+    panels: [
+      { id: 'printer-settings', title: 'Printer Settings', description: 'Printers for receipts and prescriptions', Component: PrinterSettings },
+      { id: 'doc-templates', title: 'Document Templates', description: 'Printable templates used system-wide', Component: DocumentTemplates },
+    ],
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Page shell                                                         */
+/* ------------------------------------------------------------------ */
+
+export function SettingsPage() {
+  const [categoryId, setCategoryId] = useState(CATEGORIES[0].id);
+  const category = CATEGORIES.find((c) => c.id === categoryId)!;
+  const [panelId, setPanelId] = useState(category.panels[0].id);
+
+  const activeCategory = CATEGORIES.find((c) => c.id === categoryId)!;
+  const activePanel = activeCategory.panels.find((p) => p.id === panelId) ?? activeCategory.panels[0];
+  const ActiveComponent = activePanel.Component;
+
+  function selectCategory(id: string) {
+    setCategoryId(id);
+    const next = CATEGORIES.find((c) => c.id === id)!;
+    setPanelId(next.panels[0].id);
+  }
+
+  return (
+    <div className="flex h-full">
+      {/* Category / sub-item sidebar */}
+      <aside className="w-64 shrink-0 overflow-y-auto border-r border-gray-200 bg-white py-4">
+        {CATEGORIES.map((cat) => (
+          <div key={cat.id} className="mb-1">
+            <button
+              onClick={() => selectCategory(cat.id)}
+              className={`flex w-full items-center px-4 py-2 text-left text-sm font-semibold ${
+                cat.id === categoryId ? 'text-blue-700' : 'text-gray-800 hover:bg-gray-50'
+              }`}
+            >
+              {cat.label}
+            </button>
+            {cat.id === categoryId && (
+              <div className="mt-1 space-y-0.5 pb-1">
+                {cat.panels.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setPanelId(p.id)}
+                    className={`block w-full px-8 py-1.5 text-left text-sm ${
+                      p.id === panelId
+                        ? 'bg-blue-50 font-medium text-blue-700'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {p.title}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </aside>
+
+      {/* Content */}
+      <main className="flex-1 overflow-y-auto bg-gray-50 p-6">

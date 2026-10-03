@@ -1,0 +1,25 @@
+seed/somcare_staff_seed.*
+
+# secrets and patient data - never upload
+.env
+.env.*
+!.env.example
+/backups/
+/uploads/
+/backend/uploads/
+*.dump
+
+# dependencies and build output
+node_modules/
+dist/
+build/
+.DS_Store
+
+# scratch files and old copies
+*.bak*
+inspect_output*.txt
+pnl_discovery_output.txt
+
+.phase2a-*/
+
+backend/seed/

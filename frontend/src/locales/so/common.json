@@ -1,0 +1,51 @@
+{
+  "app": {
+    "name": "Nidaamka Maaraynta Caafimaadka"
+  },
+  "nav": {
+    "dashboard": "Bogga Hore",
+    "patients": "Bukaannada",
+    "appointments": "Ballammada",
+    "queue": "Maaraynta Safka",
+    "clinical": "Caafimaadka",
+    "pharmacy": "Daawada",
+    "laboratory": "Shaybaarka",
+    "radiology": "Radioolajiga",
+    "billing": "Xisaabaadka",
+    "departments": "Waaxyaha",
+    "inventory": "Kaydka",
+    "staff": "Shaqaalaha",
+    "reports": "Warbixinnada",
+    "notifications": "Ogeysiisyada",
+    "settings": "Dejinta",
+    "logout": "Ka Bax",
+    "bloodbank": "Bangiga Dhiigga"
+  },
+  "actions": {
+    "save": "Keydi",
+    "cancel": "Jooji",
+    "edit": "Wax ka beddel",
+    "delete": "Tirtir",
+    "view": "Arag",
+    "print": "Daabac",
+    "export": "Dhoofi",
+    "search": "Raadi",
+    "add": "Kudar",
+    "create": "Samee",
+    "confirm": "Xaqiiji",
+    "back": "Dib",
+    "next": "Xiga"
+  },
+  "auth": {
+    "login": "Gal",
+    "logout": "Ka Bax",
+    "username": "Magaca Isticmaalaha",
+    "password": "Furaha Sirta",
+    "rememberMe": "I xasuuso",
+    "changePassword": "Beddel Furaha Sirta"
+  },
+  "serverStatus": {
+    "connected": "Server waa xidhan yahay",
+    "offline": "Server ma shaqeynayso"
+  }
+}

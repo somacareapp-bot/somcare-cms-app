@@ -1,0 +1,51 @@
+{
+  "app": {
+    "name": "نظام إدارة العيادة"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "patients": "المرضى",
+    "appointments": "المواعيد",
+    "queue": "إدارة الطابور",
+    "clinical": "السريري",
+    "pharmacy": "الصيدلية",
+    "laboratory": "المختبر",
+    "radiology": "الأشعة",
+    "billing": "الفواتير",
+    "departments": "الأقسام",
+    "inventory": "المخزون",
+    "staff": "الموظفون",
+    "reports": "التقارير",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "bloodbank": "بنك الدم"
+  },
+  "actions": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "view": "عرض",
+    "print": "طباعة",
+    "export": "تصدير",
+    "search": "بحث",
+    "add": "إضافة",
+    "create": "إنشاء",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "next": "التالي"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "rememberMe": "تذكرني",
+    "changePassword": "تغيير كلمة المرور"
+  },
+  "serverStatus": {
+    "connected": "الخادم متصل",
+    "offline": "الخادم غير متصل"
+  }
+}

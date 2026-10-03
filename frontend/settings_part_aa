@@ -1,0 +1,400 @@
+import { useState, type ReactNode } from 'react';
+
+/* ------------------------------------------------------------------ */
+/*  Shared primitives                                                  */
+/* ------------------------------------------------------------------ */
+
+function PanelShell({
+  title,
+  description,
+  children,
+  onSave,
+}: {
+  title: string;
+  description: string;
+  children: ReactNode;
+  onSave?: () => void;
+}) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+      <div className="border-l-4 border-blue-600 px-6 py-4">
+        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+        <p className="text-sm text-gray-500">{description}</p>
+      </div>
+      <div className="space-y-6 px-6 pb-6">{children}</div>
+      <div className="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
+        <button className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          Reset
+        </button>
+        <button
+          onClick={onSave}
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        >
+          Save Changes
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function FieldGrid({ children }: { children: ReactNode }) {
+  return <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">{children}</div>;
+}
+
+function Field({
+  label,
+  hint,
+  full,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  full?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <label className={`block ${full ? 'sm:col-span-2' : ''}`}>
+      <span className="mb-1 block text-sm font-medium text-gray-700">{label}</span>
+      {children}
+      {hint && <span className="mt-1 block text-xs text-gray-400">{hint}</span>}
+    </label>
+  );
+}
+
+const inputCls =
+  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500';
+
+function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <input {...props} className={inputCls} />;
+}
+
+function SelectInput({
+  options,
+  ...rest
+}: React.SelectHTMLAttributes<HTMLSelectElement> & { options: string[] }) {
+  return (
+    <select {...rest} className={inputCls}>
+      {options.map((o) => (
+        <option key={o}>{o}</option>
+      ))}
+    </select>
+  );
+}
+
+function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea {...props} rows={props.rows ?? 3} className={inputCls} />;
+}
+
+function Toggle({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+        checked ? 'bg-blue-600' : 'bg-gray-300'
+      }`}
+    >
+      <span
+        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+          checked ? 'translate-x-5' : 'translate-x-0.5'
+        }`}
+      />
+    </button>
+  );
+}
+
+function ToggleRow({
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  label: string;
+  description?: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-gray-100 py-3 last:border-0">
+      <div>
+        <p className="text-sm font-medium text-gray-800">{label}</p>
+        {description && <p className="text-xs text-gray-500">{description}</p>}
+      </div>
+      <Toggle checked={checked} onChange={onChange} />
+    </div>
+  );
+}
+
+function DataTable({
+  columns,
+  rows,
+  onAdd,
+  addLabel = '+ Add',
+}: {
+  columns: string[];
+  rows: string[][];
+  onAdd?: () => void;
+  addLabel?: string;
+}) {
+  return (
+    <div>
+      <div className="overflow-hidden rounded-md border border-gray-200">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+            <tr>
+              {columns.map((c) => (
+                <th key={c} className="px-4 py-2 font-medium">
+                  {c}
+                </th>
+              ))}
+              <th className="px-4 py-2" />
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {rows.map((r, i) => (
+              <tr key={i} className="hover:bg-gray-50">
+                {r.map((cell, j) => (
+                  <td key={j} className="px-4 py-2.5 text-gray-700">
+                    {cell}
+                  </td>
+                ))}
+                <td className="px-4 py-2.5 text-right">
+                  <button className="text-xs font-medium text-blue-600 hover:underline">
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <button
+        onClick={onAdd}
+        className="mt-3 text-sm font-medium text-blue-600 hover:underline"
+      >
+        {addLabel}
+      </button>
+    </div>
+  );
+}
+
+function ChecklistGrid({
+  items,
+  initial,
+}: {
+  items: string[];
+  initial?: string[];
+}) {
+  const [checked, setChecked] = useState<Set<string>>(new Set(initial ?? items));
+  const toggle = (item: string) =>
+    setChecked((prev) => {
+      const next = new Set(prev);
+      next.has(item) ? next.delete(item) : next.add(item);
+      return next;
+    });
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      {items.map((item) => (
+        <label key={item} className="flex items-center gap-2 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            checked={checked.has(item)}
+            onChange={() => toggle(item)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          {item}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+function WeeklyHoursEditor({
+  defaultClosed = ['Sunday'],
+}: {
+  defaultClosed?: string[];
+}) {
+  const [closed, setClosed] = useState<Set<string>>(new Set(defaultClosed));
+  return (
+    <div className="divide-y divide-gray-100 rounded-md border border-gray-200">
+      {WEEKDAYS.map((day) => {
+        const isClosed = closed.has(day);
+        return (
+          <div key={day} className="flex items-center gap-4 px-4 py-2.5">
+            <span className="w-28 text-sm font-medium text-gray-700">{day}</span>
+            {isClosed ? (
+              <span className="flex-1 text-sm text-gray-400">Closed</span>
+            ) : (
+              <div className="flex flex-1 items-center gap-2">
+                <input type="time" defaultValue="08:00" className={`${inputCls} w-32`} />
+                <span className="text-gray-400">to</span>
+                <input type="time" defaultValue="17:00" className={`${inputCls} w-32`} />
+              </div>
+            )}
+            <label className="flex items-center gap-1.5 text-xs text-gray-500">
+              <input
+                type="checkbox"
+                checked={isClosed}
+                onChange={() =>
+                  setClosed((prev) => {
+                    const next = new Set(prev);
+                    next.has(day) ? next.delete(day) : next.add(day);
+                    return next;
+                  })
+                }
+                className="h-3.5 w-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              Closed
+            </label>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function PermissionMatrix({ roles, permissions }: { roles: string[]; permissions: string[] }) {
+  const [grid, setGrid] = useState<Record<string, Set<string>>>(() => {
+    const init: Record<string, Set<string>> = {};
+    roles.forEach((r) => (init[r] = new Set(r === 'Administrator' ? permissions : [])));
+    return init;
+  });
+  return (
+    <div className="overflow-x-auto rounded-md border border-gray-200">
+      <table className="w-full text-left text-sm">
+        <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+          <tr>
+            <th className="px-4 py-2 font-medium">Permission</th>
+            {roles.map((r) => (
+              <th key={r} className="px-3 py-2 text-center font-medium">
+                {r}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {permissions.map((p) => (
+            <tr key={p}>
+              <td className="px-4 py-2 text-gray-700">{p}</td>
+              {roles.map((r) => (
+                <td key={r} className="px-3 py-2 text-center">
+                  <input
+                    type="checkbox"
+                    checked={grid[r]?.has(p) ?? false}
+                    onChange={() =>
+                      setGrid((prev) => {
+                        const next = { ...prev, [r]: new Set(prev[r]) };
+                        next[r].has(p) ? next[r].delete(p) : next[r].add(p);
+                        return next;
+                      })
+                    }
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Panel content — one distinct, context-real form per settings item  */
+/* ------------------------------------------------------------------ */
+
+const ROLES = ['Administrator', 'Doctor', 'Nurse', 'Receptionist', 'Pharmacist', 'Lab Tech', 'Accountant'];
+const PERMISSIONS = [
+  'View Patients',
+  'Edit Patients',
+  'Delete Patients',
+  'Manage Appointments',
+  'Manage Billing',
+  'Dispense Medicine',
+  'View Reports',
+  'Manage Settings',
+];
+
+function FacilityInformation() {
+  return (
+    <PanelShell title="Facility Information" description="Name, logo, address, and contact details">
+      <FieldGrid>
+        <Field label="Facility Name"><TextInput defaultValue="Daryeel Medicare" /></Field>
+        <Field label="Registration Number"><TextInput defaultValue="DM-2025-001" /></Field>
+        <Field label="Address" full><TextInput defaultValue="Hargeisa, Somaliland" /></Field>
+        <Field label="City"><TextInput defaultValue="Hargeisa" /></Field>
+        <Field label="Country"><SelectInput options={['Somaliland', 'Somalia', 'Ethiopia', 'Kenya']} /></Field>
+        <Field label="Phone"><TextInput defaultValue="+252 63 1234567" /></Field>
+        <Field label="Email"><TextInput type="email" defaultValue="info@daryeelmedicare.com" /></Field>
+        <Field label="Website"><TextInput defaultValue="www.daryeelmedicare.com" /></Field>
+      </FieldGrid>
+    </PanelShell>
+  );
+}
+
+function Branches() {
+  return (
+    <PanelShell title="Branches" description="Manage clinic branches or satellite locations">
+      <DataTable
+        columns={['Branch', 'Address', 'Phone', 'Manager', 'Status']}
+        rows={[
+          ['Main Branch — Hargeisa', 'Jigjiga Yar, Hargeisa', '+252 63 1234567', 'Ahmed Hassan', 'Active'],
+          ['Borama Branch', 'Central District, Borama', '+252 63 7654321', 'Amina Jama', 'Active'],
+        ]}
+        addLabel="+ Add Branch"
+      />
+    </PanelShell>
+  );
+}
+
+function Departments() {
+  return (
+    <PanelShell title="Departments" description="Clinical and admin department structure">
+      <DataTable
+        columns={['Department', 'Head of Department', 'Rooms', 'Staff']}
+        rows={[
+          ['General Medicine', 'Dr. Ahmed Hassan', '4', '12'],
+          ['Pediatrics', 'Dr. Faduma Ali', '3', '8'],
+          ['Laboratory', 'Eng. Yusuf Ismail', '2', '5'],
+          ['Pharmacy', 'Khadija Omar', '1', '4'],
+        ]}
+        addLabel="+ Add Department"
+      />
+    </PanelShell>
+  );
+}
+
+function Services() {
+  return (
+    <PanelShell title="Services" description="Services offered by the facility">
+      <div className="space-y-5">
+        <div>
+          <p className="mb-2 text-sm font-medium text-gray-700">Clinical Services</p>
+          <ChecklistGrid items={['General Consultation', 'Pediatrics', 'Antenatal Care', 'Minor Surgery', 'Vaccination', 'Dental']} />
+        </div>
+        <div>
+          <p className="mb-2 text-sm font-medium text-gray-700">Diagnostic Services</p>
+          <ChecklistGrid items={['Laboratory Tests', 'X-Ray', 'Ultrasound', 'ECG']} />
+        </div>
+      </div>
+    </PanelShell>
+  );
+}
+
+function ConsultationRooms() {
+  return (
+    <PanelShell title="Consultation Rooms" description="Room numbers, capacities, and assignments">
+      <DataTable
+        columns={['Room', 'Department', 'Capacity', 'Status']}
+        rows={[
+          ['Room 101', 'General Medicine', '1 patient', 'In Use'],
+          ['Room 102', 'General Medicine', '1 patient', 'Available'],

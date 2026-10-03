@@ -1,0 +1,51 @@
+{
+  "app": {
+    "name": "Clinical Management System"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "patients": "Patients",
+    "appointments": "Appointments",
+    "queue": "Queue Management",
+    "clinical": "Clinical",
+    "pharmacy": "Pharmacy",
+    "laboratory": "Laboratory",
+    "radiology": "Radiology",
+    "billing": "Billing",
+    "departments": "Departments",
+    "inventory": "Inventory",
+    "staff": "Staff",
+    "reports": "Reports",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "logout": "Logout",
+    "bloodbank": "Blood Bank"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "print": "Print",
+    "export": "Export",
+    "search": "Search",
+    "add": "Add",
+    "create": "Create",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "changePassword": "Change Password"
+  },
+  "serverStatus": {
+    "connected": "Server Connected",
+    "offline": "Server Offline"
+  }
+}
